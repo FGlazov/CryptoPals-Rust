@@ -2,10 +2,12 @@ extern crate base64;
 
 use std::u8;
 
-pub  trait StringUtil {
+pub trait StringUtil {
     fn hex_to_bytes(&self) -> Vec<u8>;
 
     fn hex_to_base64(&self) -> String;
+
+    fn hex_xor(&self, other : &str) -> String;
 }
 
 impl StringUtil for str {
@@ -19,6 +21,21 @@ impl StringUtil for str {
 
     fn hex_to_base64(&self) -> String {
         base64::encode(&self.hex_to_bytes())
+    }
+
+    fn hex_xor(&self, other: &str) -> String {
+        assert_eq!(self.len(), other.len());
+
+        let bytes_self = self.hex_to_bytes();
+        let bytes_other = other.hex_to_bytes();
+
+        let result: Vec<String> = bytes_self.iter()
+            .zip(bytes_other)
+            .map(|(x, y)| x ^ y)
+            .map(|x| to_hex(x))
+            .collect();
+
+        result.join("")
     }
 }
 
@@ -43,14 +60,36 @@ fn convert_string_to_u8(string: &str) -> u8 {
     }
 }
 
+fn to_hex(byte: u8) -> String {
+    let numbers = "0123456789abcdef";
+
+    let upper_half = byte >> 4;
+    let lower_half = byte - (upper_half << 4);
+
+    let string_upper_half = numbers[upper_half as usize..upper_half as usize + 1].to_string();
+    let string_lower_half = numbers[lower_half as usize..lower_half as usize + 1].to_string();
+
+    [string_upper_half, string_lower_half].join("")
+}
+
+
 #[cfg(test)]
 pub mod tests {
     use super::*;
 
     #[test]
-    pub fn test_example_problem_one() {
+    fn test_example_problem_one() {
         let input = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
         let expected = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
         assert_eq!(expected, input.hex_to_base64());
+    }
+
+    #[test]
+    fn test_example_problem_two() {
+        let actual = "1c0111001f010100061a024b53535009181c"
+            .hex_xor("686974207468652062756c6c277320657965");
+        let expected = "746865206b696420646f6e277420706c6179\
+        ";
+        assert_eq!(expected, actual);
     }
 }
