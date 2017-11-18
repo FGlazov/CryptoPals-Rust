@@ -1,9 +1,11 @@
+mod byte_util;
 mod string_util;
+mod xor_cracker;
 
 use string_util::StringUtil;
 
 fn main() {
-    let result = "1c0111001f010100061a024b53535009181c"
-        .hex_xor("686974207468652062756c6c277320657965");
-    println!("{}", result)
+    let result = xor_cracker::crack_single_key_xor_encryption("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
+
+    println!("Key: {} Decoded Text: {} Rating: {}", result.key, result.decoded_text, result.rating)
 }
