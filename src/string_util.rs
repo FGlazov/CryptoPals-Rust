@@ -4,12 +4,12 @@ use std::u8;
 
 pub trait StringUtil {
     fn hex_to_bytes(&self) -> Vec<u8>;
-
     fn hex_to_base64(&self) -> String;
-
-    fn hex_xor(&self, other : &str) -> String;
+    fn hex_to_utf8_string(&self) -> String;
+    fn hex_xor(&self, other: &str) -> String;
 }
 
+// TODO: Maybe create "Hex" wrapper for string?
 impl StringUtil for str {
     fn hex_to_bytes(&self) -> Vec<u8> {
         let two_strings = string_to_len_2_slices(self);
@@ -23,6 +23,13 @@ impl StringUtil for str {
         base64::encode(&self.hex_to_bytes())
     }
 
+    fn hex_to_utf8_string(&self) -> String {
+        match String::from_utf8(self.hex_to_bytes()) {
+            Ok(s) => return s,
+            Err(e) => panic!("{} is not a hex string, error: {}", self, e)
+        }
+    }
+
     fn hex_xor(&self, other: &str) -> String {
         assert_eq!(self.len(), other.len());
 
@@ -32,7 +39,7 @@ impl StringUtil for str {
         let result: Vec<String> = bytes_self.iter()
             .zip(bytes_other)
             .map(|(x, y)| x ^ y)
-            .map(|x| to_hex(x))
+            .map(|x| to_hex(&x))
             .collect();
 
         result.join("")
@@ -56,11 +63,11 @@ fn string_to_len_2_slices(input: &str) -> Vec<&str> {
 fn convert_string_to_u8(string: &str) -> u8 {
     match u8::from_str_radix(string, 16) {
         Ok(v) => return v,
-        Err(e) => panic!("Error during convert_string_to_u8: {}", e)
+        Err(e) => panic!("Error during convert_string_to_u8 for {}, error message: {}", string, e)
     }
 }
 
-fn to_hex(byte: u8) -> String {
+fn to_hex(byte: &u8) -> String {
     let numbers = "0123456789abcdef";
 
     let upper_half = byte >> 4;
@@ -88,8 +95,20 @@ pub mod tests {
     fn test_example_problem_two() {
         let actual = "1c0111001f010100061a024b53535009181c"
             .hex_xor("686974207468652062756c6c277320657965");
-        let expected = "746865206b696420646f6e277420706c6179\
-        ";
+        let expected = "746865206b696420646f6e277420706c6179";
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_convert_to_utf8() {
+        let expected = "the smart fox jumped over the lazy dog";
+
+        let mut hex_chars: Vec<String> = Vec::new();
+        let bytes = expected.as_bytes();
+        for byte in bytes {
+            hex_chars.push(to_hex(byte));
+        }
+        let hexed_string: String = hex_chars.join("");
+        assert_eq!(expected, hexed_string.hex_to_utf8_string());
     }
 }
