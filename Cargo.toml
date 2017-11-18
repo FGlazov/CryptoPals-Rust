@@ -1,0 +1,7 @@
+[package]
+name = "CryptoPals"
+version = "0.1.0"
+authors = ["The Batman"]
+
+[dependencies]
+base64 = "0.8.0"
