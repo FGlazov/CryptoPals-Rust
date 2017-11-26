@@ -49,16 +49,10 @@ pub fn crack_repeating_xor_encryption(ciphertext: &Vec<u8>) -> RepeatingXorDecry
 }
 
 fn guess_key_size(bytes: &Vec<u8>) -> Vec<u8> {
-    let mut key_size_to_hamming = HashMap::new();
-
-    for i in 1..41 {
-        let key_size = i as u8;
-        key_size_to_hamming.insert(key_size, averaged_hamming_distance(bytes, key_size));
-    }
-
-    let mut values: Vec<(&(u8), &f64)> = key_size_to_hamming.iter().collect();
-    values.sort_by(|&(_, value1), &(_, value2)| value1.partial_cmp(value2).unwrap());
-
+    let mut values = (1..41)
+        .map(|x| (x, averaged_hamming_distance(bytes, x)))
+        .collect::<Vec<(u8, f64)>>();
+    values.sort_by(|&(_, value1), &(_, value2)| value1.partial_cmp(&value2).unwrap());
     values.iter()
         .map(|&(key_size, _)| key_size.clone())
         .take(3)
