@@ -14,6 +14,13 @@ pub fn repeating_key_xor<'a, I>(key: I, bytes: I) -> Vec<u8>
         .collect()
 }
 
+pub fn hamming_distance<'a, I>(bytes: I, bytes2: I) -> u32
+    where I: Iterator<Item=&'a u8> + std::clone::Clone {
+    bytes.zip(bytes2)
+        .map(|(byte, byte2)| (byte ^ byte2).count_ones())
+        .sum()
+}
+
 //todo : Do this better somehow (imports for test only)
 #[allow(unused_imports)]
 use string_util;
@@ -29,4 +36,12 @@ fn test_problem_five() {
                           a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f".hex_to_bytes();
 
     assert_eq!(expected, actual);
+}
+
+#[test]
+fn test_problem_six_hamming_distance() {
+    let text = "this is a test";
+    let text2 = "wokka wokka!!!";
+
+    assert_eq!(37, hamming_distance(text.as_bytes().iter(), text2.as_bytes().iter()))
 }
