@@ -31,11 +31,10 @@ pub fn crack_repeating_xor_encryption(ciphertext: &Vec<u8>) -> RepeatingXorDecry
         let decoded_text = match String::from_utf8(decoded_bytes) {
             Ok(s) => s,
             Err(_) => {
-                println!("Continue");
                 // Case where xoring creates invalid utf-8. Can't be the key then.
                 continue
             }
-        };
+        }; // This can be done quicker by cutting together the smaller texts. This is less buggy/cleaner to read.
         let rating = rating_creator::create_rating(&decoded_text);
 
         key_size_results.push(RepeatingXorDecryptionResult {
@@ -68,16 +67,31 @@ fn guess_key_size(bytes: &Vec<u8>) -> Vec<u8> {
 
 fn averaged_hamming_distance(bytes: &Vec<u8>, n: u8) -> f64 {
     let mut result = 0.0;
-    for i in 1..3 {
-        for j in 1..3 {
+    let mut compares = 0.0;
+
+    // This is a bit slow on debug version (~20ms per run).
+    // Quick enough on release version. (50ms to run 40 of these on i7 4.0 GHZ)
+    // Can still be optimized by not allocating new vec of n bytes for every run
+    // Also can be done multi threaded
+
+    for i in 1..50 {
+        for j in 1..50 {
+            compares = compares + 1.0;
+
             let ith_bytes = n_bytes(n, i, bytes);
             let jth_bytes = n_bytes(n, j, bytes);
+
+            if ith_bytes.len() != jth_bytes.len() {
+                // case where we reached end of text.
+                break;
+            }
+
             if i == j { continue; }
             result += byte_util::hamming_distance(ith_bytes.iter(), jth_bytes.iter()) as f64 / n as f64;
         }
     }
 
-    result
+    result / compares
 }
 
 fn n_bytes(n: u8, offset: u8, bytes: &Vec<u8>) -> Vec<u8> {

@@ -26,6 +26,7 @@ pub fn hamming_distance<'a, I, J>(bytes: I, bytes2: J) -> u32
 //todo : Do this better somehow (imports for test only)
 #[allow(unused_imports)]
 use string_util;
+#[allow(unused_imports)]
 use string_util::StringUtil;
 
 #[test]
