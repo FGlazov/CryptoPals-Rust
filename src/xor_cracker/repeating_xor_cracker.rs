@@ -1,8 +1,54 @@
-use xor_cracker::rating_creator;
-use string_util;
 use std::collections::HashMap;
-use byte_util;
 use xor_cracker::itertools::Itertools;
+
+use byte_util;
+
+use xor_cracker::rating_creator;
+use xor_cracker::single_byte_xor_cracker::crack_single_byte_xor_encryption;
+
+#[derive(Clone)]
+pub struct RepeatingXorDecryptionResult {
+    pub key: Vec<u8>,
+    pub decoded_text: String,
+    pub rating: i32
+}
+
+pub fn crack_repeating_xor_encryption(ciphertext: &Vec<u8>) -> RepeatingXorDecryptionResult {
+    let key_sizes = guess_key_size(ciphertext);
+
+    let mut key_size_results = Vec::new();
+    for key_size in key_sizes {
+        let mut partial_results = Vec::new();
+        for i in 0..key_size {
+            let partial_bytes: Vec<&u8> = ciphertext.iter().skip(i as usize).step(key_size as usize).collect();
+            partial_results.push(crack_single_byte_xor_encryption(&partial_bytes))
+        }
+
+        let key : Vec<u8> = partial_results.iter()
+            .map(|x| x.key)
+            .collect();
+        let decoded_bytes = byte_util::repeating_key_xor(key.iter(), ciphertext.iter());
+        let decoded_text = match String::from_utf8(decoded_bytes) {
+            Ok(s) => s,
+            Err(_) => {
+                println!("Continue");
+                // Case where xoring creates invalid utf-8. Can't be the key then.
+                continue
+            }
+        };
+        let rating = rating_creator::create_rating(&decoded_text);
+
+        key_size_results.push(RepeatingXorDecryptionResult {
+            key,
+            decoded_text,
+            rating,
+        })
+    }
+
+    key_size_results.sort_by(|a, b| a.rating.cmp(&b.rating));
+
+    key_size_results.get(0).unwrap().clone()
+}
 
 pub fn guess_key_size(bytes: &Vec<u8>) -> Vec<u8> {
     let mut key_size_to_hamming = HashMap::new();

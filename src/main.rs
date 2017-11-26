@@ -28,9 +28,6 @@ fn main() {
         .map(|x| x.unwrap()).collect();
     let ciphertext = base64::decode(&lines.join("")).unwrap();
 
-    let key_sizes = repeating_xor_cracker::guess_key_size(&ciphertext);
-
-    for key_size in key_sizes {
-        println!("{}", key_size)
-    }
+    let result = repeating_xor_cracker::crack_repeating_xor_encryption(&ciphertext);
+    println!("{}\n\n{}", result.rating, result.decoded_text)
 }
