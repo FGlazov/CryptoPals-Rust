@@ -14,8 +14,10 @@ pub fn repeating_key_xor<'a, I>(key: I, bytes: I) -> Vec<u8>
         .collect()
 }
 
-pub fn hamming_distance<'a, I>(bytes: I, bytes2: I) -> u32
-    where I: Iterator<Item=&'a u8> + std::clone::Clone {
+pub fn hamming_distance<'a, I, J>(bytes: I, bytes2: J) -> u32
+    where I: Iterator<Item=&'a u8> + std::clone::Clone,
+          J: Iterator<Item=&'a u8> + std::clone::Clone,
+{
     bytes.zip(bytes2)
         .map(|(byte, byte2)| (byte ^ byte2).count_ones())
         .sum()
