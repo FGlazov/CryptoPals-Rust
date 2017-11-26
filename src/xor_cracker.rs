@@ -74,3 +74,15 @@ pub struct SingleKeyDecryptionResult {
     pub decoded_text: String,
     pub rating: i32
 }
+
+#[test]
+fn test_example_problem_three() {
+    let ciphertext = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+    let actual = crack_single_byte_xor_encryption(ciphertext);
+
+    let expected_key : u8 = 88;
+    let expected_decoded_text = "Cooking MC's like a pound of bacon";
+
+    assert_eq!(expected_key, actual.key);
+    assert_eq!(expected_decoded_text, actual.decoded_text)
+}
