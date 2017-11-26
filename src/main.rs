@@ -1,14 +1,34 @@
+extern crate base64;
+
 mod byte_util;
 mod string_util;
 mod xor_cracker;
 
+//todo : Do this better somehow (imports for test only)
+#[allow(unused_imports)]
+use std::io::BufRead;
+#[allow(unused_imports)]
+use std::io::BufReader;
+#[allow(unused_imports)]
+use std::fs::File;
+#[allow(unused_imports)]
+use std::path::PathBuf;
+
+
 use xor_cracker::repeating_xor_cracker;
 
 fn main() {
-    let key_sizes = repeating_xor_cracker::guess_key_size(&"badsdgdfashdfshjdsnjdagfgsvxc\
-     vasdgdasgdasogdfabgjadsdfsafasfdsafasgsagdasfhgfktglhljhjljxbjxoibcjgjtoiewoiotiadgfgoasigjxokicvj\
-     xklcbvjxklbjxklsbjoiartgud9iaewqugjasgdpoajgbxpaicgjgjdpasgjoaisgjfjjoasidgfjoigjasgjdasg\
-     jaisgjagjpoasg".bytes().collect());
+    let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    d.push("test_resources/6.txt");
+    let f = match File::open(d) {
+        Ok(a) => { a }
+        Err(b) => { panic!(b) }
+    };
+    let lines :Vec<String> = BufReader::new(f).lines()
+        .map(|x| x.unwrap()).collect();
+    let ciphertext = base64::decode(&lines.join("")).unwrap();
+
+    let key_sizes = repeating_xor_cracker::guess_key_size(&ciphertext);
 
     for key_size in key_sizes {
         println!("{}", key_size)
