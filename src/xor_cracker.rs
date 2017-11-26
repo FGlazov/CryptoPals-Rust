@@ -1,14 +1,15 @@
+use std;
 use byte_util;
-use string_util;
 use string_util::StringUtil;
+use std::ascii::AsciiExt;
 
-pub fn crack_single_key_xor_encryption(hex_ciphertext: &str) -> SingleKeyDecryptionResult {
+pub fn crack_single_byte_xor_encryption(hex_ciphertext: &str) -> SingleKeyDecryptionResult {
     let bytes_ciphertext = hex_ciphertext.hex_to_bytes();
 
     let mut result = SingleKeyDecryptionResult {
         key: 0,
         decoded_text: String::new(),
-        rating: 0,
+        rating: std::i32::MIN,
     };
     for i in 0..256 {
         let key = i as u8;
@@ -39,13 +40,18 @@ pub fn crack_single_key_xor_encryption(hex_ciphertext: &str) -> SingleKeyDecrypt
 fn create_rating(candidate_decoded_text: &String) -> i32 {
     let very_common_characters = "eta "; // Note this contains a space
     let common_characters = "oinshr ";
-    let somewhat_common_characters = "dl";
+    let somewhat_common_characters = "dl\n";
     let rest_of_alphabet = "cumwfgypbvk";
     let uncommon_characters = "vkjxqz";
 
     // Heuristic - this algorithm could likely be improved.
     let mut rating: i32 = 0;
-    for character in candidate_decoded_text.to_lowercase().chars() {
+    for character in candidate_decoded_text.chars() {
+        if character.is_uppercase() {
+            rating -= 4;
+        }
+
+        let character = character.to_ascii_lowercase();
         if very_common_characters.contains(character) {
             rating += 4;
         } else if common_characters.contains(character) {
