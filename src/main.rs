@@ -29,5 +29,5 @@ fn main() {
     let ciphertext = base64::decode(&lines.join("")).unwrap();
 
     let result = repeating_xor_cracker::crack_repeating_xor_encryption(&ciphertext);
-    println!("{}\n\n{}", result.rating, result.decoded_text)
+    println!("Rating: {} : Key: {} \n\n{}", result.rating, String::from_utf8(result.key).unwrap(), result.decoded_text)
 }

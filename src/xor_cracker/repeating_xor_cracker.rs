@@ -24,7 +24,7 @@ pub fn crack_repeating_xor_encryption(ciphertext: &Vec<u8>) -> RepeatingXorDecry
             partial_results.push(crack_single_byte_xor_encryption(&partial_bytes))
         }
 
-        let key : Vec<u8> = partial_results.iter()
+        let key: Vec<u8> = partial_results.iter()
             .map(|x| x.key)
             .collect();
         let decoded_bytes = byte_util::repeating_key_xor(key.iter(), ciphertext.iter());
@@ -45,12 +45,11 @@ pub fn crack_repeating_xor_encryption(ciphertext: &Vec<u8>) -> RepeatingXorDecry
         })
     }
 
-    key_size_results.sort_by(|a, b| a.rating.cmp(&b.rating));
-
+    key_size_results.sort_by(|a, b| b.rating.cmp(&a.rating));
     key_size_results.get(0).unwrap().clone()
 }
 
-pub fn guess_key_size(bytes: &Vec<u8>) -> Vec<u8> {
+fn guess_key_size(bytes: &Vec<u8>) -> Vec<u8> {
     let mut key_size_to_hamming = HashMap::new();
 
     for i in 1..41 {
@@ -58,7 +57,7 @@ pub fn guess_key_size(bytes: &Vec<u8>) -> Vec<u8> {
         key_size_to_hamming.insert(key_size, averaged_hamming_distance(bytes, key_size));
     }
 
-    let mut values: Vec<(&(u8), &f32)> = key_size_to_hamming.iter().collect();
+    let mut values: Vec<(&(u8), &f64)> = key_size_to_hamming.iter().collect();
     values.sort_by(|&(_, value1), &(_, value2)| value1.partial_cmp(value2).unwrap());
 
     values.iter()
@@ -67,9 +66,26 @@ pub fn guess_key_size(bytes: &Vec<u8>) -> Vec<u8> {
         .collect()
 }
 
-fn averaged_hamming_distance(bytes: &Vec<u8>, n: u8) -> f32 {
-    let first_n = bytes.iter().take(n as usize);
-    let second_n = bytes.iter().skip(n as usize).take(n as usize);
+fn averaged_hamming_distance(bytes: &Vec<u8>, n: u8) -> f64 {
+    let mut result = 0.0;
+    for i in 1..3 {
+        for j in 1..3 {
+            let ith_bytes = n_bytes(n, i, bytes);
+            let jth_bytes = n_bytes(n, j, bytes);
+            if i == j { continue; }
+            result += byte_util::hamming_distance(ith_bytes.iter(), jth_bytes.iter()) as f64 / n as f64;
+        }
+    }
 
-    (byte_util::hamming_distance(first_n, second_n)) as f32 / n as f32
+    result
+}
+
+fn n_bytes(n: u8, offset: u8, bytes: &Vec<u8>) -> Vec<u8> {
+    let result_ref = bytes.iter().skip(((offset as u32) * (n as u32)) as usize).take(n as usize);
+
+    let mut result = Vec::new();
+    for byte in result_ref {
+        result.push(byte.clone());
+    }
+    result
 }
