@@ -3,6 +3,15 @@ use byte_util;
 use string_util::StringUtil;
 use std::ascii::AsciiExt;
 
+pub fn detect_single_byte_xor_encryption<I>(candidates_hex: I) -> Vec<SingleKeyDecryptionResult>
+    where I: Iterator<Item=String>
+{
+    candidates_hex
+        .map(|x| crack_single_byte_xor_encryption(x.as_str()))
+        .filter(|x| x.rating > 0)
+        .collect()
+}
+
 pub fn crack_single_byte_xor_encryption(hex_ciphertext: &str) -> SingleKeyDecryptionResult {
     let bytes_ciphertext = hex_ciphertext.hex_to_bytes();
 
@@ -75,14 +84,43 @@ pub struct SingleKeyDecryptionResult {
     pub rating: i32
 }
 
+//todo : Do this better somehow (imports for test only)
+#[allow(unused_imports)]
+use std::io::BufRead;
+#[allow(unused_imports)]
+use std::io::BufReader;
+#[allow(unused_imports)]
+use std::fs::File;
+#[allow(unused_imports)]
+use std::path::PathBuf;
+
 #[test]
-fn test_example_problem_three() {
+fn test_problem_three() {
     let ciphertext = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
     let actual = crack_single_byte_xor_encryption(ciphertext);
 
-    let expected_key : u8 = 88;
+    let expected_key: u8 = 88;
     let expected_decoded_text = "Cooking MC's like a pound of bacon";
 
     assert_eq!(expected_key, actual.key);
     assert_eq!(expected_decoded_text, actual.decoded_text)
+}
+
+#[test]
+fn test_problem_four() {
+    let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    d.push("test_resources/4.txt");
+    let f = match File::open(d) {
+        Ok(a) => { a }
+        Err(b) => { panic!(b) }
+    };
+
+    let lines = BufReader::new(f).lines()
+        .map(|x| x.unwrap());
+
+    let decrypted_results = detect_single_byte_xor_encryption(lines);
+
+    assert_eq!(1, decrypted_results.len());
+    let result: &SingleKeyDecryptionResult = decrypted_results.get(0).unwrap();
+    assert_eq!("Now that the party is jumping\n", result.decoded_text)
 }

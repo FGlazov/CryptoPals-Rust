@@ -2,10 +2,21 @@ mod byte_util;
 mod string_util;
 mod xor_cracker;
 
-use string_util::StringUtil;
+use std::io::BufRead;
+use std::io::BufReader;
+use std::fs::File;
 
 fn main() {
-    let result = xor_cracker::crack_single_byte_xor_encryption("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
+    let f = match File::open("4.txt") {
+        Ok(a) => { a }
+        Err(b) => { panic!(b) }
+    };
 
-    println!("Key: {} Decoded Text: {} Rating: {}", result.key, result.decoded_text, result.rating)
+    let lines = BufReader::new(f).lines()
+        .map(|x| x.unwrap());
+
+    let decrypted_results= xor_cracker::detect_single_byte_xor_encryption(lines);
+    for result in decrypted_results {
+        println!("Result: {} Rating: {}", result.decoded_text, result.rating);
+    }
 }
