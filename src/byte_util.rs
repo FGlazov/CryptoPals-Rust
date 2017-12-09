@@ -23,6 +23,15 @@ pub fn hamming_distance<'a, I, J>(bytes: I, bytes2: J) -> u32
         .sum()
 }
 
+pub fn from_slice(bytes: &[u8]) -> [u8; 16] {
+    let mut result = [0; 16];
+    for i in 0..result.len() {
+        // Panics if not enough input
+        result[i] = bytes[i];
+    }
+    result
+}
+
 //todo : Do this better somehow (imports for test only)
 #[allow(unused_imports)]
 use string_util;

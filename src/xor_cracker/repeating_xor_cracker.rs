@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use xor_cracker::itertools::Itertools;
 
 use byte_util;
@@ -34,7 +33,7 @@ pub fn crack_repeating_xor_encryption(ciphertext: &Vec<u8>) -> RepeatingXorDecry
                 // Case where xoring creates invalid utf-8. Can't be the key then.
                 continue
             }
-        }; // This can be done quicker by cutting together the smaller texts. This is less buggy/cleaner to read.
+        }; // This can be done quicker by cutting together the smaller texts. This is less bug prone/cleaner to read.
         let rating = rating_creator::create_rating(&decoded_text);
 
         key_size_results.push(RepeatingXorDecryptionResult {
