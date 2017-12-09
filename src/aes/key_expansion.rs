@@ -45,7 +45,7 @@ pub fn key_expansion(key: &[u8]) -> [u8; 176] {
 
         if i % 4 == 0 {
             temp = sub_word(rot_word(temp));
-            let rcon = ((RCON_TABLE[i / 4] as u32) << 24);
+            let rcon = (RCON_TABLE[i / 4] as u32) << 24;
             temp = temp ^ rcon;
         }
 
@@ -88,12 +88,10 @@ fn bytes(word: u32) -> [u8; 4] {
 
 mod test {
     use string_util::StringUtil;
-    use byte_util;
 
     #[test]
     fn test_inv_mix_columns() {
         let key = "2b7e151628aed2a6abf7158809cf4f3c".hex_to_bytes();
-        let key_array = byte_util::from_slice(key.as_slice());
 
         let expanded = super::key_expansion(key.as_slice());
         let actual = expanded.to_vec();
