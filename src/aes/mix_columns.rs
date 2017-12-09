@@ -25,7 +25,7 @@ fn gf_mult(factor: u8, byte: u8) -> u8 {
     result
 }
 
-fn mix_columns(state: &mut [u8]) {
+pub fn mix_columns(state: &mut [u8]) {
     for i in 0..4 {
         let s0: u8 = state[i * 4];
         let s1: u8 = state[i * 4 + 1];
@@ -54,7 +54,7 @@ fn mix_columns(state: &mut [u8]) {
     }
 }
 
-fn inv_mix_columns(state: &mut [u8]) {
+pub fn inv_mix_columns(state: &mut [u8]) {
     for i in 0..4 {
         let s0: u8 = state[i * 4];
         let s1: u8 = state[i * 4 + 1];

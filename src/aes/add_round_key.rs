@@ -1,4 +1,4 @@
-fn add_round_key(state: &mut [u8], words: &[u8]) {
+pub fn add_round_key(state: &mut [u8], words: &[u8]) {
     for i in 0..state.len() {
         state[i] = state[i] ^ words[i];
     }

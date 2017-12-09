@@ -20,7 +20,7 @@ const RCON_TABLE: [u8; 256] = [
     0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
 ];
 
-fn key_expansion(key: &[u8]) -> [u8; 176] {
+pub fn key_expansion(key: &[u8]) -> [u8; 176] {
     let mut result: [u8; 176] = [0; 176];
 
     // TODO: This can probably be done natively
@@ -97,10 +97,6 @@ mod test {
 
         let expanded = super::key_expansion(key.as_slice());
         let actual = expanded.to_vec();
-
-        for byte in actual.iter() {
-            print!("{:02X}", byte);
-        }
 
         let expected = "2B7E151628AED2A6ABF7158809CF4F3CA0FAFE1788542CB123A339392A6C7605F2\
         C295F27A96B9435935807A7359F67F3D80477D4716FE3E1E237E446D7A883BEF44A541A8525B7FB671253BDB0BAD\

@@ -43,7 +43,7 @@ pub fn sub_bytes(state: &mut [u8]) {
     }
 }
 
-fn inv_sub_bytes(state: &mut [u8]) {
+pub fn inv_sub_bytes(state: &mut [u8]) {
     for i in 0..state.len() {
         state[i] = INV_LOOKUP_TABLE[state[i] as usize]
     }

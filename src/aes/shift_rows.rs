@@ -1,10 +1,10 @@
 use byte_util;
 
-fn shift_rows(state: &mut [u8]) {
+pub fn shift_rows(state: &mut [u8]) {
     shift_rows_helper(state, false);
 }
 
-fn inv_shift_rows(state: &mut [u8]) {
+pub fn inv_shift_rows(state: &mut [u8]) {
     shift_rows_helper(state, true);
 }
 
