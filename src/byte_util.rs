@@ -32,6 +32,11 @@ pub fn from_slice(bytes: &[u8]) -> [u8; 16] {
     result
 }
 
+// b1 is most significant byte, b4 least significant
+pub fn to_u32(b1: u8, b2: u8, b3: u8, b4: u8) -> u32 {
+    (b4 as u32) + ((b3 as u32) << 8) + ((b2 as u32) << 16) + ((b1 as u32) << 24)
+}
+
 //todo : Do this better somehow (imports for test only)
 #[allow(unused_imports)]
 use string_util;
