@@ -26,7 +26,14 @@ pub fn hamming_distance<'a, I, J>(bytes: I, bytes2: J) -> u32
 pub fn from_slice(bytes: &[u8]) -> [u8; 16] {
     let mut result = [0; 16];
     for i in 0..result.len() {
-        // Panics if not enough input
+        result[i] = bytes[i];
+    }
+    result
+}
+
+pub fn from_slice_4(bytes: &[u8]) -> [u8; 4] {
+    let mut result = [0; 4];
+    for i in 0..result.len() {
         result[i] = bytes[i];
     }
     result

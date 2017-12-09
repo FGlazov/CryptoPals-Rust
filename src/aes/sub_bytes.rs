@@ -37,7 +37,7 @@ const INV_LOOKUP_TABLE: [u8; 256] = [
     0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D
 ];
 
-fn sub_bytes(state: &mut [u8]) {
+pub fn sub_bytes(state: &mut [u8]) {
     for i in 0..state.len() {
         state[i] = LOOKUP_TABLE[state[i] as usize]
     }
