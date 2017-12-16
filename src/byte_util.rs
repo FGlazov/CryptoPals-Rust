@@ -44,28 +44,28 @@ pub fn to_u32(b1: u8, b2: u8, b3: u8, b4: u8) -> u32 {
     (b4 as u32) + ((b3 as u32) << 8) + ((b2 as u32) << 16) + ((b1 as u32) << 24)
 }
 
-//todo : Do this better somehow (imports for test only)
-#[allow(unused_imports)]
-use string_util;
-#[allow(unused_imports)]
-use string_util::StringUtil;
+mod test {
+    use super::repeating_key_xor;
+    use super::hamming_distance;
+    use string_util::StringUtil;
 
-#[test]
-fn test_problem_five() {
-    let text = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
-    let key = "ICE";
+    #[test]
+    fn test_problem_five() {
+        let text = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
+        let key = "ICE";
 
-    let actual = repeating_key_xor(key.as_bytes().iter(), text.as_bytes().iter());
-    let expected = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272\
+        let actual = repeating_key_xor(key.as_bytes().iter(), text.as_bytes().iter());
+        let expected = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272\
                           a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f".hex_to_bytes();
 
-    assert_eq!(expected, actual);
-}
+        assert_eq!(expected, actual);
+    }
 
-#[test]
-fn test_problem_six_hamming_distance() {
-    let text = "this is a test";
-    let text2 = "wokka wokka!!!";
+    #[test]
+    fn test_problem_six_hamming_distance() {
+        let text = "this is a test";
+        let text2 = "wokka wokka!!!";
 
-    assert_eq!(37, hamming_distance(text.as_bytes().iter(), text2.as_bytes().iter()))
+        assert_eq!(37, hamming_distance(text.as_bytes().iter(), text2.as_bytes().iter()))
+    }
 }

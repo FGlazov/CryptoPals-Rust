@@ -98,7 +98,7 @@ mod test {
 
         let ciphertext = base64::decode(&lines.join("")).unwrap();
         let actual = super::decrypt_ecb(ciphertext, "YELLOW SUBMARINE".as_bytes());
-//        println!("Text: {}", String::from_utf8(actual.clone()).unwrap());
+        println!("Text: {}", String::from_utf8(actual.clone()).unwrap());
 
         let rating = rating_creator::create_rating(&String::from_utf8(actual).unwrap());
         assert!(rating > 1000);
