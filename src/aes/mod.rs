@@ -4,6 +4,10 @@ mod mix_columns;
 mod add_round_key;
 mod key_expansion;
 
+/// A toy implementation of AES. DO NOT USE THIS IN PRODUCTION CODE!
+/// NOT SAFE AGAINST SIDE CHANNEL ATTACKS!
+
+
 pub fn encrypt_exact(plaintext: &[u8], key: &[u8]) -> [u8; 16] {
     let key_schedule = key_expansion::key_expansion(key);
     let mut state = [0; 16];
@@ -49,7 +53,7 @@ pub fn decrypt_exact(ciphertext: &[u8], key: &[u8]) -> [u8; 16] {
 pub fn decrypt_ecb(ciphertext: Vec<u8>, key: &[u8]) -> Vec<u8> {
     let mut plaintext = Vec::with_capacity(ciphertext.len());
     for i in 0..ciphertext.len() / 16 {
-        let plaintext_block = decrypt_exact(&ciphertext[i*16..i*16 + 16], key);
+        let plaintext_block = decrypt_exact(&ciphertext[i * 16..i * 16 + 16], key);
         plaintext.extend(plaintext_block.iter());
     }
 

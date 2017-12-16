@@ -1,3 +1,4 @@
+// TODO: Make this constant time (bit slice)
 // Multiply the byte in galois field GF(2^8) by the polynomial x (= byte 00000010)
 fn g2(byte: u8) -> u8 {
     let shifted = (byte as u16) << 1;
@@ -8,6 +9,7 @@ fn g2(byte: u8) -> u8 {
     }
 }
 
+// TODO: Make this constant time (bit slice)
 fn gf_mult(factor: u8, byte: u8) -> u8 {
     let mut result = 0;
     let mut current_factor = byte;
