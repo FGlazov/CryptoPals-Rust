@@ -94,3 +94,29 @@ fn n_bytes(n: u8, offset: u8, bytes: &Vec<u8>) -> Vec<u8> {
     }
     result
 }
+
+mod test {
+    use base64;
+    use std::io::BufRead;
+    use std::io::BufReader;
+    use std::fs::File;
+    use std::path::PathBuf;
+
+
+    #[test]
+    fn test_problem_six() {
+        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        d.push("test_resources/6.txt");
+        let f = match File::open(d) {
+            Ok(a) => { a }
+            Err(b) => { panic!(b) }
+        };
+        let lines :Vec<String> = BufReader::new(f).lines()
+            .map(|x| x.unwrap()).collect();
+        let ciphertext = base64::decode(&lines.join("")).unwrap();
+
+        let result = super::crack_repeating_xor_encryption(&ciphertext);
+        assert_eq!(String::from_utf8(result.key).unwrap(), "Terminator X: Bring the noise");
+        assert!(result.rating > 1000);
+    }
+}
