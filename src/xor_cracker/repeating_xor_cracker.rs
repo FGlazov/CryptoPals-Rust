@@ -68,8 +68,6 @@ fn averaged_hamming_distance(bytes: &Vec<u8>, n: u8) -> f64 {
 
     for i in 1..50 {
         for j in 1..50 {
-            compares = compares + 1.0;
-
             let ith_bytes = n_bytes(n, i, bytes);
             let jth_bytes = n_bytes(n, j, bytes);
 
@@ -78,6 +76,7 @@ fn averaged_hamming_distance(bytes: &Vec<u8>, n: u8) -> f64 {
                 break;
             }
 
+            compares = compares + 1.0;
             if i == j { continue; }
             result += byte_util::hamming_distance(ith_bytes.iter(), jth_bytes.iter()) as f64 / n as f64;
         }
