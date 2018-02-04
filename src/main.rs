@@ -2,8 +2,9 @@ extern crate base64;
 
 mod byte_util;
 mod string_util;
-mod xor_cracker;
 mod aes;
+mod aes_cracker;
+mod xor_cracker;
 
 #[allow(unused_imports)]
 use std::io::BufRead;
