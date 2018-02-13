@@ -6,3 +6,4 @@ authors = ["The Batman"]
 [dependencies]
 base64 = "0.8.0"
 itertools = "0.7.3"
+rand = "0.4"

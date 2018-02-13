@@ -1,5 +1,3 @@
-use std::ascii::AsciiExt;
-
 // Based on letter frequency in english.
 // See https://en.wikipedia.org/wiki/Letter_frequency
 pub fn create_rating(candidate_decoded_text: &String) -> i32 {

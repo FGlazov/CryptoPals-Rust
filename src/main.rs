@@ -1,4 +1,5 @@
 extern crate base64;
+extern crate rand;
 
 mod byte_util;
 mod string_util;
