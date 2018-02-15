@@ -1,4 +1,5 @@
 pub mod sub_bytes;
+pub mod wrapper;
 mod shift_rows;
 mod mix_columns;
 mod add_round_key;
